@@ -1,0 +1,80 @@
+---
+#this value can also be changed in game with the command /deathcycle [enable|disable]
+enabled: true
+
+#death cycle will only work on the worlds that are listed here
+deathcycle-worlds:
+  - "world"
+  - "exampleWorld2"
+  - "exampleWorld3"
+  - "exampleWorld4"
+
+#set to false if you dont want players to receive the lobby items when joining the server
+give-lobbyitems-onjoin: true
+
+lobby-items:
+  book:
+    name: "§r§eServer Info"
+    slot: 3
+    message: "this is the server info!!!!\n Phqzing's PP is massive!"
+  diamond-sword:
+    name: "§r§eGameModes"
+    slot: 5
+
+death-timer: "§l§c{timer}..."
+death-items:
+  grey-dye:
+    name: "§r§7Wait for timer"
+    slot: 0
+  green-dye:
+    name: "§r§aPlay Again"
+
+  compass:
+    name: "§r§eSwitch GameMode"
+    slot: 4
+
+  ender-pearl:
+    name: "§r§aSpectate"
+    slot: 8
+
+gamemode-items:
+  iron-sword:
+    name: "§r§eSumo\n§f§l-----------\n§r§aPlayers: §6{playercount}\n§f§l-----------"
+    form-name: "§r§eSumo\n§6{playercount}"
+    slot: 2
+    gui-slot: 10
+    arena: "" #your sumo world/arena name
+    kit: "Sumo" #name of your sumo kit
+
+  golden-apple:
+    name: "§r§eGapple\n§f§l-----------\n§r§aPlayers: §6{playercount}\n§f§l-----------"
+    form-name: "§r§eGapple\n§6{playercount}"
+    slot: 3
+    gui-slot: 11
+    arena: "" #your gapple world/arena name
+    kit: "Gapple" #name of your gapple kit
+
+  health-pot:
+    name: "§r§eNoDebuff\n§f§l-----------\n§r§aPlayers: §6{playercount}\n§f§l-----------"
+    form-name: "§r§eNoDebuff\n§6{playercount}"
+    slot: 4
+    gui-slot: 13
+    arena: "" #your nodebuff/potpvp world/arena name
+    kit: "NoDebuff" #name of your potpvp kit
+
+  lava-bucket:
+    name: "§r§eBuild UHC\n§f§l-----------\n§r§aPlayers: §6{playercount}\n§f§l-----------"
+    form-name: "§r§eBuild UHC\n§6{playercount}"
+    slot: 5
+    gui-slot: 15
+    arena: "" #your buhc world/arena name
+    kit: "Buhc" #name of your buhc kit
+
+  bow:
+    name: "§r§eKnockback\n§f§l-----------\n§r§aPlayers: §6{playercount}\n§f§l-----------"
+    form-name: "§r§eKnockback\n§6{playercount}"
+    slot: 6
+    gui-slot: 16
+    arena: "" #your knockback world/arena name
+    kit: "Knockback" #name of your knockback kit
+...

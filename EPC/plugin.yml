@@ -1,0 +1,11 @@
+name: "EPC"
+version: 1.0
+api: 4.0.0
+main: Alex\EPC\Main
+authors:
+  - "Alex"
+  - "Jibix"
+
+permissions:
+  ecp.bypass:
+    default: op

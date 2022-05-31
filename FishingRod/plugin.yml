@@ -1,0 +1,5 @@
+name: FishingRod
+author: Phqzing
+version: 0.0.1
+api: 4.0.0
+main: Phqzing\FishingRod\Loader

@@ -1,0 +1,20 @@
+name: DeathCycle
+author: Phqzing
+version: 0.1.2
+api: 4.0.0
+main: Phqzing\DeathCycle\Loader
+description: "A plugin that is made for Alex"
+    
+permissions:
+  deathcycle.lobby.command:
+    default: true
+  deathcycle.ff.command:
+    default: true
+  deathcycle.rekit.command:
+    default: true
+  deathcycle.kit.command:
+    default: op
+  deathcycle.toggle.command:
+    default: op
+  deathcycle.gmtp.command:
+    default: true
