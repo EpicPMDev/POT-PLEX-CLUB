@@ -1,0 +1,9 @@
+name: StaffMode
+author: Phqzing
+main: Phqzing\StaffMode\Loader
+version: 0.0.1
+api: 4.0.0
+
+permissions:
+  staffmode.core.permission:
+    default: op

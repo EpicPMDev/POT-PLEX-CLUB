@@ -1,0 +1,31 @@
+---
+ban-webhook: https://discord.com/api/webhooks/977673166442876948/sw4f6e5vBhEI1-XcR-YpWwdcKLQBRIrN4YyYerASvq_5wpOpnUcq2oHSTv8y4owk2Zvz
+mute-webhook: https://discord.com/api/webhooks/977673022930567268/Iuys3FWIzPwvu--ONVAwurApccFZrdVvMjImBnbIK3TwZnfyFPqKnRQL2K4RBfDMkl54
+
+silent-join: true
+silent-leave: true
+
+#leave-messagea and join-message will only be sent when this is set to true, set to false if you dont want to send the leave-message and join-message
+fake-messages: true
+#message sent to everyone on the server when player enables staffmode
+leave-message: "left the server"
+#message sent to everyone on the server when player disables staffmode
+join-message: "joined the server"
+
+#the text that appears when a players gets banned or tries to login while still banned from the server
+#{unbandate} - the date and time of when they will be unbanned
+#{bannedby} - the name of the player that banned them
+#{reason} - the reason to why they are banned
+ban-message: "§l§cYOU ARE BANNED\n§r§fReason: {reason}\nBanned By: {bannedby}\nBanned Until: {unbandate}"
+#the text that appears when a players gets muted or tries to talk while still muted from the server
+#{unmutedate} - the date and time of when they will be unbanned
+#{mutedby} - the name of the player that banned them
+#{reason} - the reason to why they are banned
+mute-message: "§l§cYOU ARE MUTED\n§r§fReason: {reason}\nMuted By: {mutedby}\nMuted Until: {unmutedate}"
+
+database:
+  type: sqlite
+  sqlite:
+    file: staffmode.sqlite
+  worker-limit: 1
+...

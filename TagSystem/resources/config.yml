@@ -1,0 +1,14 @@
+---
+tier-upgrade-message: "You're tier has been upgraded to {tier}"
+tier-downgrade-message: "You're tier has been downgraded to {tier}"
+
+# {name} - player name
+# {tier} - current player tier
+name-tag: "{tier}\n{name}"
+
+#should be from worst to best tier
+tiers:
+  Soldier:
+    kills: 10
+    kdr: 1.0
+...

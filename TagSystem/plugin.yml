@@ -1,0 +1,6 @@
+name: TagSystem
+author: Phqzing
+version: 0.0.1
+main: Phqzing\TagSystem\Loader
+api: 4.0.0
+depend: HoloStats
