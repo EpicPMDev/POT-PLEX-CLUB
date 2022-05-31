@@ -1,0 +1,42 @@
+---
+# The title displayed at the top of the Kills Leaderboard
+kills_title: "Top 10 Kills"
+
+# The title displayed at the top of the kdr leaderboard
+kdr_title: "Your KDR"
+
+# The line displayed for each user in the top 10
+# {username} being the users name
+# {kills} being the amount of kills the user has
+# {rank} being the rank of the user
+kills_line: "{rank} - {username} has {kills} kill(s)"
+
+# The line displayed for each user in the top 10
+# {username} being the users name
+# {kdr} being the amount of kills the user has
+kdr_line: "{username} has a {kdr} KDR"
+
+# Location of the kills Leaderboard
+kills_location:
+  world: "Spawn"
+  x: 0
+  "y": 100
+  z: 0
+
+# Location of the KDR Leaderboard
+kdr_location:
+  world: "Spawn"
+  x: 10
+  "y": 100
+  z: 0
+
+database:
+  # INTERNALS DO NOT CHANGE
+  type: sqlite
+  # Edit these settings only if you choose "sqlite".
+  sqlite:
+    # The file name of the database in the plugin data folder.
+    # You can also put an absolute path here.
+    file: stats.sqlite
+  worker-limit: 1
+...

@@ -1,0 +1,7 @@
+name: JoinLeaveMessages
+description: Send custom join and leave messages.
+version: 1.0.0
+authors:
+  - Cosmic57
+api: 4.0.0
+main: SkyWarpedMC\JoinLeaveMessages\JoinLeaveMessages

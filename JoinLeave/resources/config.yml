@@ -1,0 +1,13 @@
+# Configure join and leave messages.
+
+# Use {player} for the player name,
+# and & or § for colors.
+
+# Text to be sent globally when a player joins the server.
+join-message: "&a{player} joined the server."
+
+# Text to be sent privately to the player when they join.
+private-join-message: "&aWelcome to the server, &e{player}"
+
+# Text to be sent globally when a player leaves the server.
+leave-message: "&c{player} left the server."

@@ -1,0 +1,8 @@
+name: HoloStats
+version: 1.0.0
+api: 4.0.0
+main: GuildedThorn\Main
+author: PotPlex
+authors:
+  - GuildedThorn
+  - Phqzing
