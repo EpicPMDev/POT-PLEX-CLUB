@@ -1,0 +1,5 @@
+name: CpsCounter
+author: Phqzing
+main: Phqzing\CpsCounter\Loader
+version: 0.0.1
+api: 4.0.0
