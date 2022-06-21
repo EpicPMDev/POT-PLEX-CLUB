@@ -13,12 +13,11 @@ class SessionManager {
         return self::$sessions[$xuid] = new Session($kills, $deaths, $tag);
     }
 
-    public static function GetSession(string $xuid) : ?Session {
-        return self::$sessions[$xuid] ?? null;
+    public static function GetSession(string $xuid) : Session {
+        return self::$sessions[$xuid];
     }
 
     public static function CloseSession(Player $player) : void {
-        if(self::GetSession($player->getXuid()) == null) return; 
         Main::getDatabaseConnector()->executeChange("Stats.Update", [
             "xuid" => $player->getXuid(),
             "username" => $player->getName(),
@@ -31,7 +30,6 @@ class SessionManager {
 
     public static function update(Player $player):void
     {
-        if(self::GetSession($player->getXuid()) == null) return; 
         Main::getDatabaseConnector()->executeChange("Stats.UpdateKD", [
             "kills" => self::GetSession($player->getXuid())->getKills(),
             "deaths" => self::GetSession($player->getXuid())->getDeaths(),

@@ -1,0 +1,6 @@
+# PlatformTag plugin config.
+
+# ScoreTag format. Available tags: {PLATFORM}
+scoretag: "§7{PLATFORM}"
+
+# Plugin was made with <3 by Alex (https://github.com/pandaG5019)

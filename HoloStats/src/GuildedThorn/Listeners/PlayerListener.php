@@ -22,11 +22,7 @@ class PlayerListener implements Listener {
     public function onLogin(PlayerLoginEvent $ev) {
         $player = $ev->getPlayer();
         if(!$player->hasPlayedBefore())
-        {
             Main::getMain()->getDatabaseConnector()->executeInsert("Stats.Create", ["xuid" => $player->getXuid(), "username" => $player->getName(), "kills" => 0, "deaths" => 0, "tag" => "§6Bronze§r"]);
-            SessionManager::RegisterPlayer($player->getXuid(), 0, 0, "§6Bronze§r");
-            return;
-        }
 
         Main::getMain()->getDatabaseConnector()->executeSelect("Stats.Get", ["xuid" => $player->getXuid()], function (array $rows)use($player):void{
             $kills = 0;
@@ -81,22 +77,13 @@ class PlayerListener implements Listener {
         if($ev instanceof EntityDamageByEntityEvent)
         {
             $damager = $ev->getDamager();
-            if (!($damager instanceof Player) or !$damager->isConnected()) {
-                $damager = Main::getMain()->getServer()->getPluginManager()->getPlugin("Anti-Interrupt")->getEnemy($player);
-                $damager = Main::getMain()->getServer()->getPlayerExact($damager);
-                if(!($damager instanceof Player)) $damager = "none";
+            if ($damager instanceof Player) {
+                SessionManager::GetSession($player->getXuid())->addDeath();
+                SessionManager::GetSession($damager->getXuid())->addKill();
+                SessionManager::update($player);
+                SessionManager::update($damager);
             }
-        }else{
-            $damager = Main::getMain()->getServer()->getPluginManager()->getPlugin("Anti-Interrupt")->getEnemy($player);
-            $damager = Main::getMain()->getServer()->getPlayerExact($damager);
-            if(!($damager instanceof Player)) $damager = "none";
         }
-        
-        if($damager == "none" or !($damager instanceof Player)) return;
-        SessionManager::GetSession($player->getXuid())->addDeath();
-        SessionManager::GetSession($damager->getXuid())->addKill();
-        SessionManager::update($player);
-        SessionManager::update($damager);
     }
 
     public function onWorldChange(EntityTeleportEvent $event) {
@@ -135,7 +122,6 @@ class PlayerListener implements Listener {
                         }
                     }
                 }
-                if(SessionManager::GetSession($player->getXuid()) == null) return;
                 $kdr = str_replace(["{username}", "{kdr}"], [$player->getName(), SessionManager::GetSession($player->getXuid())->getKDR()], Main::getMain()->getConfig()->get("kdr_line"));
 
                 FloatingText::createFloatingText(FloatingText::createText(Main::getMain()->getConfig()->get("kdr_title"), $kdr), Main::getMain()->getKDRLocation(), "kdr", $player);

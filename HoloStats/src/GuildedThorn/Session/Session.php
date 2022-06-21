@@ -53,7 +53,7 @@ final class Session {
             }else{
                 $rawkdr = $this->data["Kills"] / $this->data["Deaths"];
                 $kdr = round($rawkdr, 2);
-                $kdr = number_format((float)$kdr, 2, '.', '');
+                $kdr = number_format($kdr, 2);
             }
         }
         return $kdr;
