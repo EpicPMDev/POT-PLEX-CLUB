@@ -436,8 +436,7 @@ class Loader extends PluginBase {
                 case "kick":
                     $form = new CustomForm(function(Player $player, null|array $data):void
                     {
-                        if(is_null($data)) return;
-                        if(count($data) < 2)
+                        if(count($data) < 2 or is_null($data))
                         {
                             $player->sendMessage("§cCouldn't kick player due too missing information.");
                             return;

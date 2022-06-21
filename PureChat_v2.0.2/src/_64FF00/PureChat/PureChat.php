@@ -12,7 +12,6 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\World;
 use GuildedThorn\Session\SessionManager;
-use Phqzing\DeviceTag\Main;
 
 class PureChat extends PluginBase
 {
@@ -263,7 +262,6 @@ class PureChat extends PluginBase
         $string = str_replace("{prefix}", $this->getPrefix($player, $WorldName), $string);
         $string = str_replace("{suffix}", $this->getSuffix($player, $WorldName), $string);
         $string = str_replace("{tier}", SessionManager::GetSession($player->getXuid())->getTag(), $string);
-        $string = str_replace("{device}", Main::getPlayerDevice($player), $string);
         return $string;
     }
 

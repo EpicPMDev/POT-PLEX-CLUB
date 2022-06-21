@@ -90,7 +90,7 @@ class EListener implements Listener {
         {
             $duration = 30 * 86400 + time();
             $this->plugin->database->executeInsert("staffmode.baninsert", ["name" => $player->getName(), "time" => $duration, "by" => "Console", "reason" => "Left while frozen"]); 
-            $this->plugin->logBan($player->getName(), gmdate("d/m/Y h:ia T", $duration), "Left while frozen", "Console");
+            $this->plugin->logBan($player->getName(), $duration, "Left while frozen", "Console");
             unset($this->plugin->frozen[$player->getName()]);
         }
     }
