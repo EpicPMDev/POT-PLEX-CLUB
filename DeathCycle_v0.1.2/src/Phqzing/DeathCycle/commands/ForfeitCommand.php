@@ -45,6 +45,7 @@ class ForfeitCommand extends Command {
                 return;
             }
             $sender->setGameMode(GameMode::ADVENTURE());
+            $sender->teleport($sender->getLocation()->asVector3()->add(0, 2, 0));
             $sender->setAllowFlight(true);
             $sender->setFlying(true);
             $this->plugin->giveDeathItems($sender, $mode);

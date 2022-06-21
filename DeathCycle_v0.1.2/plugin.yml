@@ -16,5 +16,3 @@ permissions:
     default: op
   deathcycle.toggle.command:
     default: op
-  deathcycle.gmtp.command:
-    default: true

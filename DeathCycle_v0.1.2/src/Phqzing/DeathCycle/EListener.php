@@ -60,55 +60,43 @@ class EListener implements Listener {
     public function onDamage(EntityDamageEvent $ev):void
     {
         $player = $ev->getEntity();
-        if(!($player instanceof Player)) return;
-        if(!$player->isConnected()) return;
+        if(!($player instanceof Player) or !$player->isConnected()) return;
 
         if(isset($this->plugin->spectator[$player->getName()])) $ev->cancel();
 
         if($ev instanceof EntityDamageByEntityEvent)
         {
             $damager = $ev->getDamager();
-            if (!($damager instanceof Player) or !$damager->isConnected()) {
-                $damager = $this->plugin->getServer()->getPluginManager()->getPlugin("Anti-Interrupt")->getEnemy($player);
-                $damager = $this->plugin->getServer()->getPlayerExact($damager);
-                if(!($damager instanceof Player)) $damager = "none";
-            }else{
-                if(isset($this->plugin->spectator[$damager->getName()]) or isset($this->plugin->spectator[$player->getName()])) $ev->cancel();   
-            }
-        }else{
-            $damager = $this->plugin->getServer()->getPluginManager()->getPlugin("Anti-Interrupt")->getEnemy($player);
-            $damager = $this->plugin->getServer()->getPlayerExact($damager);
-            if(!($damager instanceof Player)) $damager = "none";
-        }
-        
-        if($ev->getFinalDamage() >= $player->getHealth() and in_array($player->getWorld()->getFolderName(), $this->plugin->getConfig()->get("deathcycle-worlds")) and $this->plugin->getConfig()->get("enabled"))
-         {
-             $wname = $player->getWorld()->getFolderName();
-             $mode = "none";
-             $kit = "none";
-             foreach($this->plugin->getConfig()->get("gamemode-items") as $key => $arr)
+            if(!($damager instanceof Player) or !$damager->isConnected()) return;
+            if(isset($this->plugin->spectator[$damager->getName()]) or isset($this->plugin->spectator[$player->getName()])) $ev->cancel();
+            
+             if($ev->getFinalDamage() >= $player->getHealth() and in_array($player->getWorld()->getFolderName(), $this->plugin->getConfig()->get("deathcycle-worlds")) and $this->plugin->getConfig()->get("enabled"))
              {
-                 if($wname == $arr["arena"])
+                 $wname = $player->getWorld()->getFolderName();
+                 $mode = "none";
+                 $kit = "none";
+                 foreach($this->plugin->getConfig()->get("gamemode-items") as $key => $arr)
                  {
-                     $mode = $key;
-                     $kit = $arr["kit"];
+                     if($wname == $arr["arena"])
+                     {
+                         $mode = $key;
+                         $kit = $arr["kit"];
+                     }
                  }
+                 if($mode == "none") return;
+                 $player->setGameMode(GameMode::ADVENTURE());
+                 $this->plugin->giveDeathItems($player, $mode);
+                 $this->plugin->getScheduler()->scheduleRepeatingTask(new DeathTask($this->plugin, $player->getName(), $mode), 20);
+                 $ev->cancel();
+                 $dEv = new PlayerDeathEvent($player, $player->getInventory()->getContents(), $player->getXpManager()->getXpLevel(), null);
+                 $dEv->call();
+
+                 if($kit == "none") return;
+                 if(!($damager instanceof Player) or !$damager->isConnected()) return;
+                 $this->plugin->giveKit($damager, $kit);
              }
-             if($mode == "none") return;
-             $player->setGameMode(GameMode::ADVENTURE());
-             $this->plugin->giveDeathItems($player, $mode);
-             $this->plugin->getScheduler()->scheduleRepeatingTask(new DeathTask($this->plugin, $player->getName(), $mode), 20);
-             $ev->cancel();
-             $dEv = new PlayerDeathEvent($player, $player->getInventory()->getContents(), $player->getXpManager()->getXpLevel(), null);
-             $dEv->call();
-
-             if($kit == "none" or $damager == "none") return;
-             if(!($damager instanceof Player) or !$damager->isConnected()) return;
-             $this->plugin->giveKit($damager, $kit);
-             $this->plugin->getServer()->broadcastMessage("§c{$player->getName()} §fwas killed by §c{$damager->getName()}");
-         }
+        }
     }
-
 
     public function onItemUse(PlayerItemUseEvent $ev):void
     {
@@ -324,7 +312,7 @@ class EListener implements Listener {
 
             if(!($kbWorld instanceof World))
             {
-                $kbCount = "§eComing Soon";
+                $kbCount = "§c[§4Arena Offline§c]";
             }else{
                 $kbCount = "§r§aPlayers: ".count($kbWorld->getPlayers());
             }
@@ -402,12 +390,7 @@ class EListener implements Listener {
 
                 if(!($world instanceof World))
                 {
-                    if($key == "bow")
-                    {
-                        $playerCount = "N/A\n§eComing Soon";
-                    }else{
-                        $playerCount = "N/A\n§c[§4Arena Offline§c]";
-                    }
+                    $playerCount = "N/A\n§c[§4Arena Offline§c]";
                 }else {
                     $playerCount = count($world->getPlayers());
                 }

@@ -12,7 +12,7 @@ use muqsit\simplepackethandler\SimplePacketHandler;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\ContainerClosePacket;
 use muqsit\invmenu\InvMenuHandler;
-use Phqzing\DeathCycle\commands\{DeathCycleCommand, ForfeitCommand, KitCommand, LobbyCommand, RekitCommand, GamemodeTPCommand};
+use Phqzing\DeathCycle\commands\{DeathCycleCommand, ForfeitCommand, KitCommand, LobbyCommand, RekitCommand};
 
 class Loader extends PluginBase {
 
@@ -31,7 +31,6 @@ class Loader extends PluginBase {
         $this->getServer()->getCommandMap()->register("forfeit", new ForfeitCommand($this));
         $this->getServer()->getCommandMap()->register("deathcycle", new DeathCycleCommand($this));
         $this->getServer()->getCommandMap()->register("rekit", new RekitCommand($this));
-        $this->getServer()->getCommandMap()->register("gmtp", new GamemodeTPCommand($this));
 
         $this->db = new \Sqlite3($this->getDataFolder()."DeathCycle.db");
         $this->db->exec("CREATE TABLE IF NOT EXISTS kits(
@@ -133,12 +132,7 @@ class Loader extends PluginBase {
                     
                 if(!($world instanceof World))
                 {
-                    if($key == "bow")
-                    {
-                        $playerCount == "N/A\n§eComing Soon";
-                    }else{
-                        $playerCount = "N/A\n§c[§4Arena Offline§c]";
-                    }
+                    $playerCount = "N/A\n§c[§4Arena Offline§c]";
                 }else {
                     $playerCount = 0;
                     foreach($world->getPlayers() as $players)

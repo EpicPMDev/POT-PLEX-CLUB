@@ -28,7 +28,6 @@ class AntiInterrupt extends PluginBase {
 
     public function getEnemy(Player $player)
     {
-        if(!isset($this->fighting[$player->getName()])) return "none";
         return $this->fighting[$player->getName()];
     }
 

@@ -42,6 +42,10 @@ class PlayerListener implements Listener {
         if($cause instanceof EntityDamageByEntityEvent)
         {
             $killer = $cause->getDamager();
+            $level = $killer->getWorld()->getFolderName();
+            $level2 = $player->getWorld()->getFolderName();
+            if(in_array($level, $this->plugin->getConfig()->get("disabled-worlds")) and $this->plugin->getConfig()->get("allow-disabled-worlds")) return;
+            if(in_array($level2, $this->plugin->getConfig()->get("disabled-worlds")) and $this->plugin->getConfig()->get("allow-disabled-worlds")) return;
             if($killer instanceof Player and $killer->isConnected())
             {
                 if(isset($this->plugin->fighting[$player->getName()]))
