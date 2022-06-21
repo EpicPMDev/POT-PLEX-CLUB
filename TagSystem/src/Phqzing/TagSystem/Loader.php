@@ -27,7 +27,6 @@ class Loader extends PluginBase implements Listener {
 
             if(!($cause instanceof EntityDamageByEntityEvent)) return;
             $damager = $cause->getDamager();
-            if(!($damager instanceof Player)) return;
             if(!$damager->isConnected()) return;
 
             $session = SessionManager::GetSession($damager->getXuid());
@@ -93,23 +92,21 @@ class Loader extends PluginBase implements Listener {
 
         foreach(self::$instance->getConfig()->get("tiers") as $name => $arr)
         {
-            if($kills >= $arr["kills"] and $kdr >= $arr["kdr"])
+            if($kills >= $arr["kills"] and (int)$kdr >= $arr["kdr"])
             {
                 $tier = $name;
             }
         }
+
         return $tier;
     }
     
     public static function isDemoted(string $tier1, string $tier2):bool
     {
-        if($tier1 == "§6Bronze§r") return true;
-        if($tier2 == "§6Bronze§r") return false;
-    
-        $t1k = self::$instance->getConfig()->get("tiers")[$tier1]["kills"];
-        $t1kdr = self::$instance->getConfig()->get("tiers")[$tier1]["kdr"];
-        $t2k = self::$instance->getConfig()->get("tiers")[$tier2]["kills"];
-        $t2kdr = self::$instance->getConfig()->get("tiers")[$tier2]["kdr"];
+        $t1k = self::getConfig()->get($tier1)["kills"];
+        $t1kdr = self::getConfig()->get($tier1)["kdr"];
+        $t2k = self::getConfig()->get($tier2)["kills"];
+        $t2kdr = self::getConfig()->get($tier2)["kdr"];
         
         if($t1k >= $t2k and $t1kdr >= $t2kdr)
            return false;

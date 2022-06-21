@@ -210,9 +210,8 @@ class WorldGuard extends PluginBase
         $this->updateRegion($player);
     }
 
-    public function getRegionFromPosition($pos)
+    public function getRegionFromPosition(Position $pos)
     {
-        if(!($pos instanceof Position)) return "";
         $name = $this->getRegionNameFromPosition($pos);
         return $name !== "" ? $this->getRegion($name) : "";
     }
@@ -370,7 +369,7 @@ class WorldGuard extends PluginBase
                 }
                 if (! $player->hasPermission("worldguard.bypass.fly." . $newregion)) {
                     if (($flight = $new->getFlight()) !== self::FLY_VANILLA) {
-                        if ($player->getGamemode() != GameMode::CREATIVE()) {
+                        if ($player->getGamemode() != 1) {
                             switch ($flight) {
                                 case self::FLY_ENABLE:
                                 case self::FLY_SUPERVISED:

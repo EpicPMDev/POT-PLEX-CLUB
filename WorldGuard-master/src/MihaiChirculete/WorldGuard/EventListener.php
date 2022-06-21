@@ -22,16 +22,15 @@
 
 namespace MihaiChirculete\WorldGuard;
 
-use pocketmine\block\{Block, VanillaBlocks, Liquid};
+use pocketmine\block\Block;
 use pocketmine\event\block\{BlockPlaceEvent, BlockBreakEvent, LeavesDecayEvent, BlockGrowEvent, BlockUpdateEvent, BlockSpreadEvent, BlockBurnEvent};
-use pocketmine\event\entity\{EntityDamageEvent, EntityDamageByEntityEvent, EntityExplodeEvent, EntityTeleportEvent};
+use pocketmine\event\entity\{EntityDamageEvent, EntityDamageByEntityEvent, EntityExplodeEvent};
 use pocketmine\event\Listener;
-use pocketmine\event\player\{PlayerJoinEvent, PlayerMoveEvent, PlayerInteractEvent, PlayerItemConsumeEvent, PlayerCommandPreprocessEvent, PlayerDropItemEvent, PlayerBedEnterEvent, PlayerChatEvent, PlayerExhaustEvent, PlayerDeathEvent, PlayerQuitEvent, PlayerBucketEmptyEvent};
-use pocketmine\event\plugin\PluginDisableEvent;
+use pocketmine\event\player\{PlayerJoinEvent, PlayerMoveEvent, PlayerInteractEvent, PlayerItemConsumeEvent, PlayerCommandPreprocessEvent, PlayerDropItemEvent, PlayerBedEnterEvent, PlayerChatEvent, PlayerExhaustEvent, PlayerDeathEvent, PlayerQuitEvent};
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
-use pocketmine\world\{Position, World};
+use pocketmine\world\Position;
 use function json_encode;
 
 class EventListener implements Listener {
@@ -45,41 +44,9 @@ class EventListener implements Listener {
 
     const OTHER = [256, 259, 269, 273, 277, 284, 290, 291, 292, 293, 294];
 
-    public $breakable = [];
-
     private $plugin;
 
     public function __construct(WorldGuard $plugin){$this->plugin = $plugin;}
-
-
-    public function onPluginDisable(PluginDisableEvent $ev):void
-    {
-        $world = $this->plugin->getServer()->getWorldManager()->getWorldByName($this->plugin->getConfig()->get("buhc-world"));
-        if(!($world instanceof World))
-        {
-            $this->breakable = [];
-            return;
-        }
-        foreach($this->breakable as $i => $arr)
-        {
-            if($arr["liquid"])
-            {
-                $block = $world->getBlockAt($arr["x"], $arr["y"], $arr["z"]);
-                foreach($block->getAllSides() as $blocks)
-                {
-                    if($blocks instanceof Liquid)
-                    {
-                        $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                    }else if ($blocks->getId() == VanillaBlocks::OBSIDIAN()->getId()){
-                        $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                    }
-                }
-            }else{
-                $world->setBlockAt($arr["x"], $arr["y"], $arr["z"], VanillaBlocks::AIR(), true);
-            }
-            unset($this->breakable[$i]);
-        }
-    }
 
     /**
     * @priority MONITOR
@@ -92,49 +59,14 @@ class EventListener implements Listener {
     public function onLeave(PlayerQuitEvent $event)
     {
         $this->plugin->onPlayerLogoutRegion($event->getPlayer());
-        
-        $world = $this->plugin->getServer()->getWorldManager()->getWorldByNAme($this->plugin->getConfig()->get("buhc-world"));
-        if(!($world instanceof World))
-        {
-            $this->breakable = [];
-            return;
-        }
-        foreach($this->breakable as $i => $arr)
-        {
-            if($arr["owner"] == $event->getPlayer()->getName())
-            {
-                if($arr["liquid"])
-                {
-                    $block = $world->getBlockAt($arr["x"], $arr["y"], $arr["z"]);
-                    foreach($block->getAllSides() as $blocks)
-                    {
-                        if($blocks instanceof Liquid)
-                        {
-                            $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                        }else if($blocks->getId() == VanillaBlocks::OBSIDIAN()->getId()){
-                            $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                        }
-                    }
-                }else{
-                    $world->setBlockAt($arr["x"], $arr["y"], $arr["z"], VanillaBlocks::AIR(), true);
-                }
-                unset($this->breakable[$i]);
-            }
-        }
     }
 
     public function onInteract(PlayerInteractEvent $event)
     {
         if ($event->getItem()->getID() == 325){
             $player = $event->getPlayer();
-            $block = $event->getBlock();
             if (($reg = $this->plugin->getRegionFromPosition($event->getBlock()->getPosition())) !== "") {
                 if ($reg->getFlag("block-place") === "false") {
-                    if($player->getWorld()->getFolderName() == $this->plugin->getConfig()->get("buhc-world"))
-                    {
-                        $this->breakable[] = ["x" => $block->getPosition()->getX(), "y" => $block->getPosition()->getY(), "z" => $block->getPosition()->getZ(), "owner" => $player->getName(), "liquid" => true];
-                        return true;
-                    }else
                     if($event->getPlayer()->hasPermission("worldguard.place." . $reg->getName()) || $event->getPlayer()->hasPermission("worldguard.block-place." . $reg->getName())){
                         return true;
                     }
@@ -302,10 +234,7 @@ class EventListener implements Listener {
         if (($region = $this->plugin->getRegionFromPosition($position)) !== ""){
             if ($region->getFlag("pluginbypass") === "false"){
                 if ($region->getFlag("block-place") === "false"){
-                    if($player->getWorld()->getFolderName() == $this->plugin->getConfig()->get("buhc-world")){
-                        $this->breakable[] = ["x" => $x, "y" => $block->getPosition()->getY(), "z" => $z, "owner" => $player->getName(), "liquid" => false];
-                        return true;
-                    }else if($event->getPlayer()->hasPermission("worldguard.place." . $region->getName()) || $event->getPlayer()->hasPermission("worldguard.block-place." . $region->getName())){
+                    if($event->getPlayer()->hasPermission("worldguard.place." . $region->getName()) || $event->getPlayer()->hasPermission("worldguard.block-place." . $region->getName())){
                         return true;
                     }
                     else if($event->getPlayer()->hasPermission("worldguard.build-bypass")){
@@ -313,7 +242,8 @@ class EventListener implements Listener {
                     }
                     else if ($player->hasPermission(DefaultPermissions::ROOT_OPERATOR)){
                         return true;
-                    }else{
+                    }
+                    else{
                         if ($region->getFlag("deny-msg") === "true") {
                             $player->sendMessage(TF::RED. $this->plugin->resourceManager->getMessages()["denied-block-place"]);
                         }
@@ -342,20 +272,7 @@ class EventListener implements Listener {
         if (($region = $this->plugin->getRegionFromPosition($position)) !== ""){
             if ($region->getFlag("pluginbypass") === "false"){
                 if ($region->getFlag("block-break") === "false"){
-                    if($player->getWorld()->getFolderName() == $this->plugin->getConfig()->get("buhc-world")){
-                        if($block->getPosition()->getY() <= 61)
-                        {
-                            $event->cancel();
-                            return;
-                        }
-                        foreach($this->breakable as $i => $arr)
-                        {
-                            if($arr["x"] == $x and $arr["y"] == $block->getPosition()->getY() and $arr["z"] == $z)
-                            {
-                                unset($this->breakable[$i]);
-                            }
-                        }
-                    }else if($event->getPlayer()->hasPermission("worldguard.break." . $region->getName()) || $event->getPlayer()->hasPermission("worldguard.block-break." . $region->getName())){
+                    if($event->getPlayer()->hasPermission("worldguard.break." . $region->getName()) || $event->getPlayer()->hasPermission("worldguard.block-break." . $region->getName())){
                         return true;
                     }
                     else if($event->getPlayer()->hasPermission("worldguard.break-bypass")){
@@ -363,7 +280,8 @@ class EventListener implements Listener {
                     }
                     else if ($player->hasPermission(DefaultPermissions::ROOT_OPERATOR)){
                         return true;
-                    }else{
+                    }
+                    else{
                         if ($region->getFlag("deny-msg") === "true") {
                             $player->sendMessage(TF::RED. $this->plugin->resourceManager->getMessages()["denied-block-break"]);
                         }
@@ -378,33 +296,7 @@ class EventListener implements Listener {
         }
     }
 
-    public function onDeathItemDrop(PlayerDeathEvent $event) {
-        $world = $event->getPlayer()->getWorld();
-        if($world->getFolderName() == $this->plugin->getConfig()->get("buhc-world"))
-        {
-            foreach($this->breakable as $i => $arr)
-            {
-                if($arr["owner"] == $event->getPlayer()->getName())
-                {
-                    if($arr["liquid"])
-                    {
-                        $block = $world->getBlockAt($arr["x"], $arr["y"], $arr["z"]);
-                        foreach($block->getAllSides() as $blocks)
-                        {
-                            if($blocks instanceof Liquid)
-                            {
-                                $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                            }else if($blocks->getId() == VanillaBlocks::OBSIDIAN()->getId()){
-                                $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                            }
-                        }
-                    }else{
-                        $world->setBlockAt($arr["x"], $arr["y"], $arr["z"], VanillaBlocks::AIR(), true);
-                    }
-                    unset($this->breakable[$i]);
-                }
-            }
-        }
+    public function onDeathItemDrop(PlayerDeathEvent $event) {        
         if (($reg = $this->plugin->getRegionByPlayer($player = $event->getPlayer())) !== "") {
             if ($reg->getFlag("item-by-death") === "false" && !$player->hasPermission("worldguard.deathdrop." . $reg->getName())) {
                 if ($reg->getFlag("deny-msg") === "true") {
@@ -649,14 +541,12 @@ class EventListener implements Listener {
         }
     }
 
-    /*
     public function onLeafDecay(LeavesDecayEvent $event)
     {
         if(($region = $this->plugin->getRegionFromPosition($event->getBlock()->asPosition())) !== "")
             if($region->getFlag("allow-leaves-decay") === "false")
                 $event->cancel();
     }
-    */
 
     public function onPlantGrowth(BlockGrowEvent $event)
     {
@@ -670,40 +560,5 @@ class EventListener implements Listener {
         if(($region = $this->plugin->getRegionFromPosition($event->getBlock()->getPosition())) !== "")
             if($region->getFlag("allow-spreading") === "false")
                 $event->cancel();
-    }
-    
-    public function onTeleport(EntityTeleportEvent $ev):void
-    {
-        $entity = $ev->getEntity();
-        if(!($entity instanceof Player)) return;
-        
-        $world = $ev->getFrom()->getWorld();
-        $from = $world->getFolderName();
-        
-        if($from == $this->plugin->getConfig()->get("buhc-world"))
-        {
-            foreach($this->breakable as $i => $arr)
-            {
-                if($arr["owner"] == $entity->getName())
-                {
-                    if($arr["liquid"])
-                    {
-                        $block = $world->getBlockAt($arr["x"], $arr["y"], $arr["z"]);
-                        foreach($block->getAllSides() as $blocks)
-                        {
-                            if($blocks instanceof Liquid)
-                            {
-                                $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                            }else if($blocks->getId() == VanillaBlocks::OBSIDIAN()->getId()){
-                                $world->setBlock($blocks->getPosition(), VanillaBlocks::AIR());
-                            }
-                        }
-                    }else{
-                        $world->setBlockAt($arr["x"], $arr["y"], $arr["z"], VanillaBlocks::AIR(), true);
-                    }
-                    unset($this->breakable[$i]);
-                }
-            }
-        }
     }
 }
